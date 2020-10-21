@@ -5,10 +5,11 @@ import {CompanySelect} from "./Components/CompanySelect";
 import {PreviewTable} from "./Components/PreviewTable";
 import {VehicleSchema} from "./columnSchemas/vehicle";
 import {ContactSchema} from "./columnSchemas/contact";
+import {OrderSchema} from "./columnSchemas/order";
 import Select from "react-select";
 import StatusAlert, { StatusAlertService } from 'react-status-alert'
 import 'react-status-alert/dist/status-alert.css'
-var store = require('store');
+
 export class App extends React.Component {
 
     constructor(props) {
@@ -17,6 +18,7 @@ export class App extends React.Component {
         this.saveNewRules = this.saveNewRules.bind(this);
         this.autoSelectedSave = this.autoSelectedSave.bind(this);
         this.import = this.import.bind(this);
+        this.importHandleEvent = this.importHandleEvent.bind(this);
 
         this.cacheRules = null;
 
@@ -26,6 +28,7 @@ export class App extends React.Component {
             header: null,
             rules: {},
             cacheRules: null,
+            fileDelimiter: ',',
             companyId: null,
             isFirstHeader: true,
             preloadTable: {
@@ -101,35 +104,45 @@ export class App extends React.Component {
         // store.set('file', file);
     }
 
-    import() {
+    importHandleEvent() {
+        this.import();
+    }
+
+    import(offset = 0) {
         this.applyCacheRules();
         const delimiter = 10000;
-        let offset = 0;
         const fileLength = this.state.file.length;
-        while (fileLength > offset) {
-            let result = this.prepareImport(delimiter, offset);
-            offset += delimiter;
-            fetch(this.buildUrl('/cabinet/import/save') + '&table=' + this.state.currentSchema,
-                {
-                    method: 'POST',
-                    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                    redirect: 'follow', // manual, *follow, error
-                    referrerPolicy: 'no-referrer', // no-referrer, *client
-                    body: JSON.stringify(result) // body data type must match "Content-Type" header
-                })
-                .then(res => res.json())
-                .then(
-                    (result) => {
-                        if(result.status === 'success') {
+
+        let result = this.prepareImport(delimiter, offset);
+
+        fetch(this.buildUrl('/cabinet/import/save') + '&table=' + this.state.currentSchema,
+            {
+                method: 'POST',
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                redirect: 'follow', // manual, *follow, error
+                referrerPolicy: 'no-referrer', // no-referrer, *client
+                body: JSON.stringify(result) // body data type must match "Content-Type" header
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    if(result.status === 'success') {
+                        if(result.message.length < 120) {
                             StatusAlertService.showSuccess(result.message);
                         } else {
-                            StatusAlertService.showError(result.message);
-                        }},
-                )
-                .catch((reason) => {
-                    StatusAlertService.showError('Error request');
-                })
-        }
+                            StatusAlertService.showSuccess(result.message, {autoHide: false});
+                        }
+                        offset += delimiter;
+                        if(fileLength > offset) {
+                            this.import(offset);
+                        }
+                    } else {
+                        StatusAlertService.showError(result.message, {autoHide: false});
+                    }},
+            )
+            .catch((reason) => {
+                StatusAlertService.showError('Error request');
+            })
     }
 
     reloadPreviewTable() {
@@ -214,6 +227,7 @@ export class App extends React.Component {
         return {
             vehicle: VehicleSchema,
             contact: ContactSchema,
+            order: OrderSchema,
         }
     }
 
@@ -237,6 +251,10 @@ export class App extends React.Component {
         this.setState({ currentSchema: selected.value });
     }
 
+    setDelimiter = (selected) => {
+        this.setState( { fileDelimiter: selected.value } );
+    }
+
     render() {
         return <div className="app-container">
             <StatusAlert/>
@@ -257,7 +275,32 @@ export class App extends React.Component {
                 placeholder="Select table"
                 onChange={this.setColumnSchema}
             />
-            <FileUploader onSaveFile={this.saveFile} />
+            <Select
+                options={[
+                    {
+                        value: ',',
+                        label: 'Coma'
+                    },
+                    {
+                        value: '.',
+                        label: 'Dot'
+                    },
+                    {
+                        value: ';',
+                        label: 'Dot and coma'
+                    },
+                    {
+                        value: "\t",
+                        label: 'Tab'
+                    },
+                ]}
+                placeholder="Select delimiter"
+                onChange={this.setDelimiter}
+            />
+            <FileUploader
+                onSaveFile={this.saveFile}
+                delimiter={this.state.fileDelimiter}
+            />
             {
                 this.state.currentSchema && this.state.companyId ?
                     (
@@ -269,7 +312,7 @@ export class App extends React.Component {
                                 header={this.state.header}
                                 autoSelectedSave={this.autoSelectedSave}
                             />
-                            <button onClick={this.import}>
+                            <button onClick={this.importHandleEvent}>
                                 Import
                             </button>
                         </div>

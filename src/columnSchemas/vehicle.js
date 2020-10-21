@@ -6,6 +6,9 @@ import {MarkRelationship} from "../Components/MarkRelationship";
 export const VehicleSchema = (App) => {
     return [
         {
+            name: 'id'
+        },
+        {
             name: 'odometer',
             optionsCallback: () => {
                 return <Odometer
@@ -63,7 +66,7 @@ export const VehicleSchema = (App) => {
                 return <DynamicRelationship
                     columnIndex={columnIndex}
                     optionUrl={App.buildUrl('/cabinet/import/company-body-type')}
-                    name="vehicle_color_id" handlerCallback={App.saveNewRules}
+                    name="body_type_id" handlerCallback={App.saveNewRules}
                     autoSelectedSave={App.autoSelectedSave}
                     rows={App.getUniqueRowValue(columnIndex)} />
             },
@@ -84,7 +87,7 @@ export const VehicleSchema = (App) => {
             optionsCallback: (columnIndex) => {
                 return <DynamicRelationship
                     columnIndex={columnIndex}
-                    optionUrl={App.buildUrl('/cabinet/import/statuses')}
+                    optionUrl={App.buildUrl('/cabinet/import/vehicle-statuses')}
                     name="status" handlerCallback={App.saveNewRules}
                     autoSelectedSave={App.autoSelectedSave}
                     rows={App.getUniqueRowValue(columnIndex)}

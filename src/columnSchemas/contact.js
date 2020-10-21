@@ -4,10 +4,24 @@ import {DynamicRelationship} from "../Components/DynamicRelationship";
 export const ContactSchema = (App) => {
     return [
         {
+            name: 'id'
+        },
+        {
             name: 'first_name',
         },
         {
             name: 'last_name',
+        },
+        {
+            name: 'type',
+            optionsCallback: (columnIndex) => {
+                return <DynamicRelationship
+                    columnIndex={columnIndex}
+                    optionUrl={App.buildUrl('/cabinet/import/contact-types')}
+                    name="type" handlerCallback={App.saveNewRules}
+                    autoSelectedSave={App.autoSelectedSave}
+                    rows={App.getUniqueRowValue(columnIndex)} />
+            },
         },
         {
             name: 'contact_group_id',
@@ -15,7 +29,7 @@ export const ContactSchema = (App) => {
                 return <DynamicRelationship
                     columnIndex={columnIndex}
                     optionUrl={App.buildUrl('/cabinet/import/company-contact-groups')}
-                    name="vehicle_color_id" handlerCallback={App.saveNewRules}
+                    name="contact_group_id" handlerCallback={App.saveNewRules}
                     autoSelectedSave={App.autoSelectedSave}
                     rows={App.getUniqueRowValue(columnIndex)} />
             },
@@ -65,5 +79,14 @@ export const ContactSchema = (App) => {
         {
             name: 'note',
         },
+        {
+            name: 'vat_number',
+        },
+        {
+            name: 'registration_number',
+        },
+        {
+            name: 'company_name'
+        }
     ];
 }

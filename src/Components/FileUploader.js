@@ -17,12 +17,13 @@ export const FileUploader = (props) => {
     }
 
     const CSVtoArray = (text) => {
+        console.log(props.delimiter);
         let p = '', row = [''], ret = [row], i = 0, r = 0, s = !0, l;
         for (l of text) {
             if ('"' === l) {
                 if (s && l === p) row[i] += l;
                 s = !s;
-            } else if (',' === l && s) l = row[++i] = '';
+            } else if (props.delimiter === l && s) l = row[++i] = '';
             else if ('\n' === l && s) {
                 if ('\r' === p) row[i] = row[i].slice(0, -1);
                 row = ret[++r] = [l = '']; i = 0;
@@ -42,7 +43,7 @@ export const FileUploader = (props) => {
             <input type='file'
                    id='file'
                    className='file-input'
-                   accept='.csv'
+                   accept='.csv,.tsv,.dsv'
                    onChange={e => handleFileChosen(e.target.files[0])}
             />
         </Styles>
