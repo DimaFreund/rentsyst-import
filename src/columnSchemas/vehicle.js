@@ -3,8 +3,9 @@ import {Odometer} from "../Components/Odometer";
 import {DynamicRelationship} from "../Components/DynamicRelationship";
 import {MarkRelationship} from "../Components/MarkRelationship";
 
+let customField = null;
 export const VehicleSchema = (App) => {
-    return [
+    let result = [
         {
             name: 'id'
         },
@@ -139,6 +140,19 @@ export const VehicleSchema = (App) => {
             }
         },
         {
+            title: 'Type of fuel',
+            name: 'vehicle_fuel_id',
+            optionsCallback: (columnIndex) => {
+                return <DynamicRelationship
+                    columnIndex={columnIndex}
+                    optionUrl={App.buildUrl('/cabinet/import/fuel-list')}
+                    name="vehicle_fuel_id" handlerCallback={App.saveNewRules}
+                    autoSelectedSave={App.autoSelectedSave}
+                    rows={App.getUniqueRowValue(columnIndex)}
+                />
+            },
+        },
+        {
             name: 'base_price',
             handlerResult: (value, property) => {
                 if(!value) {
@@ -184,6 +198,7 @@ export const VehicleSchema = (App) => {
             }
         },
         {
+            title: 'Type engine',
             name: 'type_engine',
             handlerResult: (value, property) => {
                 if(!value) {
@@ -193,10 +208,32 @@ export const VehicleSchema = (App) => {
             }
         },
         {
+            title: 'Registration number',
             name: 'registration_number',
         },
         {
+            title: 'Vin number',
             name: 'vin_number',
         },
     ];
+
+    if(!customField) {
+        fetch(App.buildUrl('/cabinet/import/custom-fields'),
+            {
+                method: 'GET',
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                redirect: 'follow', // manual, *follow, error
+                referrerPolicy: 'no-referrer', // no-referrer, *client
+            })
+            .then(res => res.json())
+            .then((response) => {
+                    customField = response;
+                }
+            );
+    } else {
+        result = result.concat(customField);
+    }
+
+
+    return result;
 }

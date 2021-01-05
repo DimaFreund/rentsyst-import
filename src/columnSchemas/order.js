@@ -148,5 +148,9 @@ export const OrderSchema = (App) => {
         {
             name: 'price_company',
         },
+        {
+            title: 'Comment (Note)',
+            name: 'comment'
+        }
     ];
 }

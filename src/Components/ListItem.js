@@ -37,7 +37,7 @@ export class ListItem extends React.Component {
 
         return <li style={{background: selectedOption.color}}>
             <div className="item-title">
-                {this.props.name}
+                {this.props.title ?? this.props.name}
             </div>
             <Select
                 value={selectedOption.option}

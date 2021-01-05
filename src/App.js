@@ -6,9 +6,15 @@ import {PreviewTable} from "./Components/PreviewTable";
 import {VehicleSchema} from "./columnSchemas/vehicle";
 import {ContactSchema} from "./columnSchemas/contact";
 import {OrderSchema} from "./columnSchemas/order";
+import {PaymentSchema} from "./columnSchemas/payment";
 import Select from "react-select";
 import StatusAlert, { StatusAlertService } from 'react-status-alert'
 import 'react-status-alert/dist/status-alert.css'
+import {DocumentLicenceSchema} from "./columnSchemas/document_licence";
+import {DocumentPassportSchema} from "./columnSchemas/document_passport";
+import {VehicleDamagesSchemas} from "./columnSchemas/vehicle_damages";
+import {MaintenanceSchema} from "./columnSchemas/maintenance";
+import {ContactBonusSchema} from "./columnSchemas/contact_bonus";
 
 export class App extends React.Component {
 
@@ -40,6 +46,7 @@ export class App extends React.Component {
 
     saveNewRules(name, ruleProperty) {
         let rules = this.state.rules;
+        console.log(name, ruleProperty, rules);
         if(!rules[name]) {
             rules[name] = {};
 
@@ -192,7 +199,7 @@ export class App extends React.Component {
                         newValue = column.defaultValue;
                     }
                     if(column.handlerResult) {
-                        newValue = column.handlerResult(newValue, rule);
+                        newValue = column.handlerResult(newValue, rule, i);
                     }
                     if(rule.columnIndex && rule.defaultValue) {
                         newValue = rule.defaultValue;
@@ -227,7 +234,13 @@ export class App extends React.Component {
         return {
             vehicle: VehicleSchema,
             contact: ContactSchema,
+            document_license: DocumentLicenceSchema,
+            document_passport: DocumentPassportSchema,
             order: OrderSchema,
+            order_payment: PaymentSchema,
+            vehicle_damage: VehicleDamagesSchemas,
+            order_maintenance: MaintenanceSchema,
+            contact_bonus: ContactBonusSchema,
         }
     }
 

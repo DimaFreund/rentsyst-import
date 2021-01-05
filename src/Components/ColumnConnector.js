@@ -42,6 +42,7 @@ export class ColumnConnector extends React.Component {
                                 optionsCallback={columnOptions.optionsCallback}
                                 handlerCallback={this.props.handlerCallback}
                                 name={columnOptions.name}
+                                title={columnOptions.title}
                                 autoSelectedSave={this.props.autoSelectedSave}
                             />
                         )}
