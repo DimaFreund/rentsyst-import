@@ -1,5 +1,7 @@
 import React from "react";
 import {DynamicRelationship} from "../Components/DynamicRelationship";
+import {jsToMysqlDateTime} from "../helpers/ConvertDateTime";
+import {DateMask} from "../Components/DateMask";
 
 export const OrderSchema = (App) => {
     return [
@@ -8,23 +10,27 @@ export const OrderSchema = (App) => {
         },
         {
             name: 'created_at',
-            handlerResult: (value) => {
-                if(!value) {
-                    return '';
-                }
-                let date = new Date(value);
-                return date.yymmddhhmmss();
-            }
+            handlerResult: (value, property) => {
+                return jsToMysqlDateTime(value, property.template);
+            },
+            optionsCallback: () => {
+                return <DateMask
+                    name="created_at"
+                    handlerCallback={App.saveNewRules}
+                />
+            },
         },
         {
             name: 'updated_at',
-            handlerResult: (value) => {
-                if(!value) {
-                    return '';
-                }
-                let date = new Date(value);
-                return date.yymmddhhmmss();
-            }
+            handlerResult: (value, property) => {
+                return jsToMysqlDateTime(value, property.template);
+            },
+            optionsCallback: () => {
+                return <DateMask
+                    name="updated_at"
+                    handlerCallback={App.saveNewRules}
+                />
+            },
         },
         {
             name: 'vehicle_id',
@@ -56,23 +62,27 @@ export const OrderSchema = (App) => {
         },
         {
             name: 'date_from',
-            handlerResult: (value) => {
-                if(!value) {
-                    return '';
-                }
-                let date = new Date(value);
-                return date.yymmddhhmmss();
-            }
+            handlerResult: (value, property) => {
+                return jsToMysqlDateTime(value, property.template);
+            },
+            optionsCallback: () => {
+                return <DateMask
+                    name="date_from"
+                    handlerCallback={App.saveNewRules}
+                />
+            },
         },
         {
             name: 'date_to',
-            handlerResult: (value) => {
-                if(!value) {
-                    return '';
-                }
-                let date = new Date(value);
-                return date.yymmddhhmmss();
-            }
+            handlerResult: (value, property) => {
+                return jsToMysqlDateTime(value, property.template);
+            },
+            optionsCallback: () => {
+                return <DateMask
+                    name="date_to"
+                    handlerCallback={App.saveNewRules}
+                />
+            },
         },
         {
             name: 'status',
@@ -119,33 +129,43 @@ export const OrderSchema = (App) => {
             },
         },
         {
+            title: 'Price per day for vehicle',
             name: 'price_per_day',
         },
         {
+            title: 'Price only by vehicle',
             name: 'total_price',
         },
         {
+            title: 'Total price by vehicle, taxes, penalties, options and other details',
             name: 'total',
         },
         {
+            title: 'Insurance price',
             name: 'total_insurance_price',
         },
         {
+            title: 'Options (additional) price',
             name: 'price_options',
         },
         {
+            title: 'Delivery price',
             name: 'price_delivery',
         },
         {
+            title: 'Balance (total - paid)',
             name: 'balance',
         },
         {
+            title: 'Paid price',
             name: 'payments_price',
         },
         {
+            title: "Deposit price",
             name: 'deposits_price',
         },
         {
+            title: 'Custom price',
             name: 'price_company',
         },
         {

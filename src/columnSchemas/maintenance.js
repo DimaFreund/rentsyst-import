@@ -1,5 +1,7 @@
 import React from "react";
 import {DynamicRelationship} from "../Components/DynamicRelationship";
+import {jsToMysqlDateTime} from "../helpers/ConvertDateTime";
+import {DateMask} from "../Components/DateMask";
 
 export const MaintenanceSchema = (App) => {
     return [
@@ -17,23 +19,27 @@ export const MaintenanceSchema = (App) => {
         },
         {
             name: 'date_from',
-            handlerResult: (value) => {
-                if(!value) {
-                    return '';
-                }
-                let date = new Date(value);
-                return date.yymmddhhmmss();
-            }
+            handlerResult: (value, property) => {
+                return jsToMysqlDateTime(value, property.template);
+            },
+            optionsCallback: () => {
+                return <DateMask
+                    name="date_from"
+                    handlerCallback={App.saveNewRules}
+                />
+            },
         },
         {
             name: 'date_to',
-            handlerResult: (value) => {
-                if(!value) {
-                    return '';
-                }
-                let date = new Date(value);
-                return date.yymmddhhmmss();
-            }
+            handlerResult: (value, property) => {
+                return jsToMysqlDateTime(value, property.template);
+            },
+            optionsCallback: () => {
+                return <DateMask
+                    name="date_to"
+                    handlerCallback={App.saveNewRules}
+                />
+            },
         },
         {
             title: 'Status',
@@ -59,13 +65,15 @@ export const MaintenanceSchema = (App) => {
         {
             title: 'Created at',
             name: 'created_at',
-            handlerResult: (value) => {
-                if(!value) {
-                    return '';
-                }
-                let date = new Date(value);
-                return date.yymmddhhmmss();
-            }
+            handlerResult: (value, property) => {
+                return jsToMysqlDateTime(value, property.template);
+            },
+            optionsCallback: () => {
+                return <DateMask
+                    name="created_at"
+                    handlerCallback={App.saveNewRules}
+                />
+            },
         },
         {
             title: 'Name of custom maintenance',

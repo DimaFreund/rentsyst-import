@@ -1,5 +1,7 @@
 import React from "react";
 import {DynamicRelationship} from "../Components/DynamicRelationship";
+import {DateMask} from "../Components/DateMask";
+import {jsToMysqlDateTime} from "../helpers/ConvertDateTime";
 
 export const PaymentSchema = (App) => {
     return [
@@ -33,33 +35,39 @@ export const PaymentSchema = (App) => {
         },
         {
             name: 'date',
-            handlerResult: (value) => {
-                if(!value) {
-                    return '';
-                }
-                let date = new Date(value);
-                return date.yymmddhhmmss();
-            }
+            handlerResult: (value, property) => {
+                return jsToMysqlDateTime(value, property.template);
+            },
+            optionsCallback: () => {
+                return <DateMask
+                    name="date"
+                    handlerCallback={App.saveNewRules}
+                />
+            },
         },
         {
             name: 'created_at',
-            handlerResult: (value) => {
-                if(!value) {
-                    return '';
-                }
-                let date = new Date(value);
-                return date.yymmddhhmmss();
-            }
+            handlerResult: (value, property) => {
+                return jsToMysqlDateTime(value, property.template);
+            },
+            optionsCallback: () => {
+                return <DateMask
+                        name="created_at"
+                        handlerCallback={App.saveNewRules}
+                     />
+            },
         },
         {
             name: 'updated_at',
-            handlerResult: (value) => {
-                if(!value) {
-                    return '';
-                }
-                let date = new Date(value);
-                return date.yymmddhhmmss();
-            }
+            handlerResult: (value, property) => {
+                return jsToMysqlDateTime(value, property.template);
+            },
+            optionsCallback: () => {
+                return <DateMask
+                    name="updated_at"
+                    handlerCallback={App.saveNewRules}
+                />
+            },
         },
         {
             name: 'value'

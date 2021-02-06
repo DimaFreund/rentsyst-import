@@ -1,5 +1,7 @@
 import React from "react";
 import {DynamicRelationship} from "../Components/DynamicRelationship";
+import {jsToMysqlDateTime} from "../helpers/ConvertDateTime";
+import {DateMask} from "../Components/DateMask";
 
 export const ContactSchema = (App) => {
     return [
@@ -42,13 +44,15 @@ export const ContactSchema = (App) => {
         },
         {
             name: 'birthday',
-            handlerResult: (value) => {
-                if(!value) {
-                    return '';
-                }
-                let date = new Date(value);
-                return date.yyyymmdd();
-            }
+            handlerResult: (value, property) => {
+                return jsToMysqlDateTime(value, property.template, "YYYY-MM-DD");
+            },
+            optionsCallback: () => {
+                return <DateMask
+                    name="birthday"
+                    handlerCallback={App.saveNewRules}
+                />
+            },
         },
         {
             name: 'country',

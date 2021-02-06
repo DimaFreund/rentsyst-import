@@ -1,7 +1,8 @@
 import React from "react";
-import {Odometer} from "../Components/Odometer";
 import {DynamicRelationship} from "../Components/DynamicRelationship";
 import {TextTemplateRelationship} from "../Components/TextTemplateRelationship";
+import {jsToMysqlDateTime} from "../helpers/ConvertDateTime";
+import {DateMask} from "../Components/DateMask";
 
 export const VehicleDamagesSchemas = (App) => {
     return [
@@ -27,13 +28,15 @@ export const VehicleDamagesSchemas = (App) => {
         {
             title: 'Date of created',
             name: 'created_at',
-            handlerResult: (value) => {
-                if(!value) {
-                    return '';
-                }
-                let date = new Date(value);
-                return date.yymmddhhmmss();
-            }
+            handlerResult: (value, property) => {
+                return jsToMysqlDateTime(value, property.template);
+            },
+            optionsCallback: () => {
+                return <DateMask
+                    name="created_at"
+                    handlerCallback={App.saveNewRules}
+                />
+            },
         },
         {
             title: 'Damage title',
@@ -53,6 +56,9 @@ export const VehicleDamagesSchemas = (App) => {
             },
             handlerResult: (value, property, rowIndex) => {
                 let template = property.template;
+                if(!template) {
+                    return value;
+                }
                 let header = App.state.header;
                 let reBrackets = /\{\{(.*?)\}\}/g;
                 let found;

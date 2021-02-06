@@ -170,7 +170,7 @@ export class App extends React.Component {
         let endPosition = countRow + offset;
 
         if(endPosition > fileLength) {
-            endPosition = fileLength;
+            endPosition = fileLength - 1;
         }
 
         this.getCurrentColumnSchema().map((column, newColumnIndex) => {

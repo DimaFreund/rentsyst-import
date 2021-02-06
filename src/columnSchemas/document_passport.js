@@ -1,6 +1,8 @@
 import React from "react";
 import {DynamicRelationship} from "../Components/DynamicRelationship";
 import {TextTemplateRelationship} from "../Components/TextTemplateRelationship";
+import {jsToMysqlDateTime} from "../helpers/ConvertDateTime";
+import {DateMask} from "../Components/DateMask";
 
 export const DocumentPassportSchema = (App) => {
     return [
@@ -19,24 +21,28 @@ export const DocumentPassportSchema = (App) => {
         {
             title: 'Date of issue',
             name: 'date_issue',
-            handlerResult: (value) => {
-                if(!value) {
-                    return '';
-                }
-                let date = new Date(value);
-                return date.yyyymmdd();
-            }
+            handlerResult: (value, property) => {
+                return jsToMysqlDateTime(value, property.template, "YYYY-MM-DD");
+            },
+            optionsCallback: () => {
+                return <DateMask
+                    name="date_issue"
+                    handlerCallback={App.saveNewRules}
+                />
+            },
         },
         {
             title: 'Date of expiry',
             name: 'date_exp',
-            handlerResult: (value) => {
-                if(!value) {
-                    return '';
-                }
-                let date = new Date(value);
-                return date.yyyymmdd();
-            }
+            handlerResult: (value, property) => {
+                return jsToMysqlDateTime(value, property.template, "YYYY-MM-DD");
+            },
+            optionsCallback: () => {
+                return <DateMask
+                    name="date_exp"
+                    handlerCallback={App.saveNewRules}
+                />
+            },
         },
         {
             title: 'Notes (comment)',
